@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-1. Load packages and read-in penguins.csv data
+##1. Load packages and read-in penguins.csv data
 
 ```{r, include = FALSE}
 library(tidyverse)
@@ -23,7 +23,7 @@ Our question:
 
 Is there a significant difference in mean flipper length for femail penguins by species (Chinstrap, Gentoo, and Adelie)?
 
-2. Do some exploring
+##2. Do some exploring
 
 New functions: with + table for easy counting over multiple factors
 
@@ -90,3 +90,32 @@ penguin_variances
 #Even though we got significant result for Levene's test, if your largest variance is less than 4x the smallest variance, can still use ANOVA
 ```
 
+##3. One-way ANOVA
+
+Single factor: common_name (species)
+Number of levels in factor: 2 (Chinstrap, Gentoo, Adelie)
+Random variable: flipper_length (mm)
+
+Is there a significant difference in mean flipper length (mm) for female Chinstrap, Gentoo, and Adelie penguins?
+
+```{r}
+# H0: Mean flipper lengths across all species are equal
+# HA: At least two means differ significantly
+
+penguin_aov <- aov(flipper_length ~ common_name, data = penguins2)
+summary(penguin_aov)
+
+# If we take sampels for these three groups and they actually have the same mean flipper length, there is nearly a 0% chance that we would have gotten the difference in one or more means that we got, by random chance.
+
+# At least two samples were taken from populations with different means. Which ones are different? All three are different from eachother? Or something else?
+
+# Post-hoc testing using Tukey's HSD
+
+penguin_ph <- TukeyHSD(penguin_aov)
+penguin_ph
+
+```
+
+Mean flipper lengths for Adelie, Gentoo, and Chinstrap penguins are all significantly different (F(df) = statistic, p <0.001, $\alpha$ = 0.05 with post-hoc Tukey's HSD, $\alpha = 0.05$.
+
+Ex. Of the five locations studied, two locations were found to differ significantly (include ANOVA and the Tukey's info)
